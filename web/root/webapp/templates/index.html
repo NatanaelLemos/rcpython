@@ -1,0 +1,59 @@
+<p>
+    Current direction: <span id="spnDirection">Unknown</span>
+</p>
+
+<script>
+    let pressedKeys = [];
+
+    onKeydown = (e) => {
+        if (pressedKeys.some(k => k === e.code)) {
+            return;
+        }
+        pressedKeys.push(e.code);
+    }
+
+    onKeyup = (e) => {
+        pressedKeys = pressedKeys.filter(k => k !== e.code);
+    }
+
+    defineCurrentDirection = () => {
+        let direction = 0;
+        if (pressedKeys.some(k => k === 'ArrowUp')) {
+            direction += 1000;
+        }
+        if (pressedKeys.some(k => k === 'ArrowDown')) {
+            direction += 100;
+        }
+        if (pressedKeys.some(k => k === 'ArrowLeft')) {
+            direction += 10;
+        }
+        if (pressedKeys.some(k => k === 'ArrowRight')) {
+            direction += 1;
+        }
+
+        return direction;
+    }
+
+    postDirections = () => {
+        if (!pressedKeys.length) {
+            return;
+        }
+
+        const currentDirection = defineCurrentDirection();
+        document.querySelector('#spnDirection').innerHTML = currentDirection;
+
+        const xhttp = new XMLHttpRequest();
+        xhttp.open('POST', '/web/', true);
+        xhttp.setRequestHeader('Content-Type', 'application/json');
+        xhttp.send(JSON.stringify({
+            direction: currentDirection
+        }));
+    }
+
+    (() => {
+        document.addEventListener('keydown', onKeydown);
+        document.addEventListener('keyup', onKeyup);
+
+        setInterval(postDirections, 500);
+    })();
+</script>
