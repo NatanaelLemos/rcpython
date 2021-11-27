@@ -1,8 +1,12 @@
 from flask import Flask, render_template, request, jsonify
-from lib import Motor
+from Motor import *
+from Buzzer import *
+from Led import *
 
 app = Flask(__name__)
 PWM = Motor()
+buzzer = Buzzer()
+led = Led()
 
 
 @app.route("/", methods=["GET"])
@@ -12,25 +16,39 @@ def hello_world():
 
 @app.route("/", methods=["POST"])
 def post():
-    direction = getDirection()
-
-    if (direction & 1000) == 1000:
-        print("forward")
-        moveRobot(-2000, -2000, -2000, -2000)
-    elif (direction & 100) == 100:
-        print("backward")
-        moveRobot(2000, 2000, 2000, 2000)
-    elif (direction & 10) == 10:
-        print("left")
-        moveRobot(1000, 1000, -2000, -2000)
-    elif (direction & 1) == 1:
-        print("right")
-        moveRobot(-2000, -2000, 1000, 1000)
+    if isHornCommand():
+        horn()
     else:
-        print("stop")
-        moveRobot(0, 0, 0, 0)
+        direction = getDirection()
+
+        if (direction & 1000) == 1000:
+            print("forward")
+            moveRobot(-2000, -2000, -2000, -2000)
+        elif (direction & 100) == 100:
+            print("backward")
+            moveRobot(2000, 2000, 2000, 2000)
+        elif (direction & 10) == 10:
+            print("left")
+            moveRobot(2000, 2000, -2000, -2000)
+        elif (direction & 1) == 1:
+            print("right")
+            moveRobot(-2000, -2000, 2000, 2000)
+        else:
+            print("stop")
+            moveRobot(0, 0, 0, 0)
 
     return "ok"
+
+
+def isHornCommand():
+    content = request.json
+    return ("horn" in content) and (content["horn"] == 1)
+
+
+def horn():
+    led.colorWipe(led.strip, Color(255, 255, 255))
+    time.sleep(2)
+    led.colorWipe(led.strip, Color(0, 0, 0))
 
 
 def getDirection():

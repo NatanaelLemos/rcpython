@@ -17,6 +17,14 @@
         if (pressedKeys.some(k => k === e.code)) {
             return;
         }
+
+        if (e.code === 'Space') {
+            post(JSON.stringify({
+                horn: 1
+            }));
+            return;
+        }
+
         pressedKeys.push(e.code);
     }
 
@@ -49,20 +57,23 @@
 
         const currentDirection = defineCurrentDirection();
         document.querySelector('#spnDirection').innerHTML = currentDirection;
+        post(JSON.stringify({
+            direction: currentDirection
+        }));
+    }
 
+    post = (content) => {
         const xhttp = new XMLHttpRequest();
         xhttp.open('POST', '/', true);
         xhttp.setRequestHeader('Content-Type', 'application/json');
-        xhttp.send(JSON.stringify({
-            direction: currentDirection
-        }));
+        xhttp.send(content);
     }
 
     (() => {
         document.addEventListener('keydown', onKeydown);
         document.addEventListener('keyup', onKeyup);
 
-        setInterval(postDirections, 500);
+        setInterval(postDirections, 200);
     })();
 </script>
 
