@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, jsonify
-from Motor import *
-from Buzzer import *
-from Led import *
+from .bot.Motor import *
+from .bot.Buzzer import *
+from .bot.Led import *
 
 app = Flask(__name__)
 PWM = Motor()

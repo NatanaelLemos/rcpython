@@ -2,79 +2,55 @@
 
 <head>
     <title>RC</title>
+    <style>
+        button {
+            height: 60px;
+            width: 60px;
+            font-size: 24pt;
+        }
+    </style>
 </head>
 
 <body>
-    <p>
-        Current direction: <span id="spnDirection">Unknown</span>
-    </p>
+    <table>
+        <tbody>
+            <tr>
+                <td>
+                    <button id="btnTL">↖️</button>
+                </td>
+                <td>
+                    <button id="btnT">⬆️</button>
+                </td>
+                <td>
+                    <button id="btnTR">↗️</button>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button id="btnL">⬅️</button>
+                </td>
+                <td></td>
+                <td>
+                    <button id="btnTR">➡️</button>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button id="btnBL">↙️</button>
+                </td>
+                <td>
+                    <button id="btnB">⬇️</button>
+                </td>
+                <td>
+                    <button id="btnBR">↘️</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 </body>
 
-<script>
-    let pressedKeys = [];
-
-    onKeydown = (e) => {
-        if (pressedKeys.some(k => k === e.code)) {
-            return;
-        }
-
-        if (e.code === 'Space') {
-            post(JSON.stringify({
-                horn: 1
-            }));
-            return;
-        }
-
-        pressedKeys.push(e.code);
-    }
-
-    onKeyup = (e) => {
-        pressedKeys = pressedKeys.filter(k => k !== e.code);
-    }
-
-    defineCurrentDirection = () => {
-        let direction = 0;
-        if (pressedKeys.some(k => k === 'ArrowUp')) {
-            direction += 1000;
-        }
-        if (pressedKeys.some(k => k === 'ArrowDown')) {
-            direction += 100;
-        }
-        if (pressedKeys.some(k => k === 'ArrowLeft')) {
-            direction += 10;
-        }
-        if (pressedKeys.some(k => k === 'ArrowRight')) {
-            direction += 1;
-        }
-
-        return direction;
-    }
-
-    postDirections = () => {
-        if (!pressedKeys.length) {
-            return;
-        }
-
-        const currentDirection = defineCurrentDirection();
-        document.querySelector('#spnDirection').innerHTML = currentDirection;
-        post(JSON.stringify({
-            direction: currentDirection
-        }));
-    }
-
-    post = (content) => {
-        const xhttp = new XMLHttpRequest();
-        xhttp.open('POST', '/', true);
-        xhttp.setRequestHeader('Content-Type', 'application/json');
-        xhttp.send(content);
-    }
-
-    (() => {
-        document.addEventListener('keydown', onKeydown);
-        document.addEventListener('keyup', onKeyup);
-
-        setInterval(postDirections, 200);
-    })();
-</script>
+<script src="index.js"></script>
+<script src="movement.js"></script>
+<script src="horn.js"></script>
 
 </html>
