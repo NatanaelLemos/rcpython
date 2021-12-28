@@ -10,11 +10,13 @@ class Movement {
     }
 
     onMouseDown = (e) => {
+        this.pressedKeys = [];
         this.onBtnSwitch(e.srcElement.id, this.onKeyPressed);
     }
 
     onMouseUp = (e) => {
         this.onBtnSwitch(e.srcElement.id, this.onKeyUnpressed);
+        this.pressedKeys = [];
     }
 
     onBtnSwitch = (btnId, func) => {
@@ -58,6 +60,8 @@ class Movement {
 
         this.pressedKeys.push(key);
         state.direction = this.defineCurrentDirection();
+        console.log('direction');
+        console.log(state.direction);
     }
 
     onKeyUnpressed = (key) => {
